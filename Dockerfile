@@ -7,4 +7,4 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jdk
 COPY --from=build /target/*.war app.war
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.war"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=dev", "-Djava.net.preferIPv4Stack=false", "-Djava.net.preferIPv6Addresses=true", "-jar", "app.war"]
