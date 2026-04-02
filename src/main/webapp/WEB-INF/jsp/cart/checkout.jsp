@@ -18,7 +18,11 @@
                         <div class="col-4"><input type="number" id="s_zipCode" class="form-control" placeholder="Irányítószám" required></div>
                         <div class="col-8"><input type="text" id="s_city" class="form-control" placeholder="Város" required></div>
                         <div class="col-12"><input type="text" id="s_street" class="form-control" placeholder="Utca neve" required></div>
-                        <div class="col-12"><input type="text" id="s_houseNumber" class="form-control" placeholder="Házszám, emelet, ajtó"></div>
+                        <div class="col-6"><input type="text" id="s_houseNumber" class="form-control" placeholder="Házszám"></div>
+                        <div class="col-6"><input type="text" id="b_building" class="form-control" placeholder="Épület"></div>
+                        <div class="col-4"><input type="text" id="b_apartment" class="form-control" placeholder="Lépcsőház"></div>
+                        <div class="col-4"><input type="text" id="b_floor" class="form-control" placeholder="Emelet"></div>
+                        <div class="col-4"><input type="text" id="b_door" class="form-control" placeholder="Ajtó"></div>
                     </div>
 
                     <div class="form-check form-switch mt-3 p-3 bg-light rounded border">
@@ -26,13 +30,17 @@
                         <label class="form-check-label fw-bold" for="sameAsShip">A számlázási cím megegyezik a szállítási címmel</label>
                     </div>
 
-                    <div class="d-none mt-3" id="billingSection">
+                    <div class="d-none mt-3" id="billingSection">+
                         <h5 class="mb-3 text-secondary"><i class="bi bi-receipt me-2"></i>Számlázási cím</h5>
                         <div class="row g-2">
                             <div class="col-4"><input type="number" id="b_zipCode" class="form-control" placeholder="Irányítószám"></div>
                             <div class="col-8"><input type="text" id="b_city" class="form-control" placeholder="Város"></div>
                             <div class="col-12"><input type="text" id="b_street" class="form-control" placeholder="Utca neve"></div>
-                            <div class="col-12"><input type="text" id="b_houseNumber" class="form-control" placeholder="Házszám, emelet, ajtó"></div>
+                            <div class="col-6"><input type="text" id="b_houseNumber" class="form-control" placeholder="Házszám"></div>
+                            <div class="col-6"><input type="text" id="b_building" class="form-control" placeholder="Épület"></div>
+                            <div class="col-4"><input type="text" id="b_apartment" class="form-control" placeholder="Lépcsőház"></div>
+                            <div class="col-4"><input type="text" id="b_floor" class="form-control" placeholder="Emelet"></div>
+                            <div class="col-4"><input type="text" id="b_door" class="form-control" placeholder="Ajtó"></div>
                         </div>
                     </div>
 
@@ -82,13 +90,18 @@
 				        zipCode: '${shippingAddresses[0].zipCode}',
 				        city: '${shippingAddresses[0].city}',
 				        street: '${shippingAddresses[0].street}',
-				        houseNumber: '${shippingAddresses[0].houseNumber}'
+				        houseNumber: '${shippingAddresses[0].houseNumber}',
+				        building: '${shippingAddresses[0].building}',
+				        apartment: '${shippingAddresses[0].apartment}',
+				        floor: '${shippingAddresses[0].floor}',
+				        door: '${shippingAddresses[0].door}'
 				    };
 
 				    document.getElementById('s_zipCode').value = firstShipping.zipCode;
 				    document.getElementById('s_city').value = firstShipping.city;
 				    document.getElementById('s_street').value = firstShipping.street;
 				    document.getElementById('s_houseNumber').value = firstShipping.houseNumber !== '-' ? firstShipping.houseNumber : '';
+				    document.getElementById('s_building').value = firtBuilding.building;
 
 				    savedShippingId = firstShipping.id;
 				    savedBillingId = ${billingAddresses[0].id};
