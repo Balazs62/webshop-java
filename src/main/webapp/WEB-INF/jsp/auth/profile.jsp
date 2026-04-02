@@ -5,85 +5,88 @@
 <%@ include file="../shared/header.jsp" %>
 
 <div class="container mt-4 mb-5">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 mb-4">
+    <div class="row align-items-start">
+        
+        <div class="col-lg-4 col-md-12 mb-5">
+            <div class="card shadow-sm border-0">
                 <div class="card-header bg-dark text-white py-3">
                     <h5 class="mb-0">Cím hozzáadása</h5>
                 </div>
-	                <div class="card-body">
-	                   <form action="<c:url value='/add-address'/>" method="post" class="needs-validation">
-					    <div class="form-check mb-4 p-3 border rounded bg-light shadow-sm transition-all">
-					        <input class="form-check-input ms-1" type="checkbox" name="sameAsShipping" id="sameAsShipping">
-					        <label class="form-check-label small fw-bold ms-2" for="sameAsShipping">
-					            🏠 A számlázási cím megegyezik a szállításival
-					        </label>
-					    </div>
-					
-					    <div id="categoryContainer" class="mb-3">
-					        <label class="form-label small fw-bold text-muted text-uppercase" style="font-size: 0.75rem;">Cím típusa</label>
-					        <select id="addressCategory" name="addressCategory" class="form-select shadow-sm border-primary-subtle">
-         						<option value="BILLING">💳 Számlázási cím</option>
-					            <option value="SHIPPING">🚚 Szállítási cím</option>
-					        </select>
-					    </div>
-					
-					    <div class="row g-2 mb-3">
-					        <div class="col-4">
-					            <label class="form-label small fw-bold">Irsz.</label>
-					            <input type="text" id="zipCode" name="zipCode" class="form-control shadow-sm" list="zipOptions" placeholder="1234" 
-					             pattern = "^[0-9]{4}$" title ="Az irányítószám pontosan 4 számjegy lehet" maxlength="4" required>
-					            <datalist id="zipOptions"></datalist>
-					        </div>
-							<div class="col-8">
-							    <label class="form-label small fw-bold">Város</label>
-							    <input type="text" id="city" name="city" class="form-control shadow-sm" 
-							           placeholder="Város neve" 
-							           pattern="^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s\-\.]+$"
-							           title="Csak betűket, szóközt, pontot és kötőjelet használhat!" 
-							           required>
-							</div>
-					
-					    <div class="mb-3">
-					        <label class="form-label small fw-bold">Utca / Közterület</label>
-					        <input type="text" name="street" class="form-control shadow-sm" placeholder="Fő utca" required>
-					    </div>
-					
-					    <div class="row g-2 mb-3">
-					        <div class="col-6">
-					            <label class="form-label small fw-bold">Házszám</label>
-					            <input type="text" name="houseNumber" class="form-control shadow-sm" placeholder="12/A" required>
-					        </div>
-					        <div class="col-6">
-					            <label class="form-label small fw-bold">Emelet</label>
-					            <input type="text" name="floor" class="form-control shadow-sm" placeholder="3.">
-					        </div>
-					    </div>
-					
-					    <div class="row g-2 mb-4">
-					        <div class="col-4">
-					            <label class="form-label small fw-bold">Ajtó</label>
-					            <input type="text" name="door" class="form-control shadow-sm" placeholder="13">
-					        </div>
-					        <div class="col-4">
-					            <label class="form-label small fw-bold">Épület</label>
-					            <input type="text" name="building" class="form-control shadow-sm" placeholder="A ép.">
-					        </div>
-					        <div class="col-4">
-					            <label class="form-label small fw-bold">Lépcsőház</label>
-					            <input type="text" name="apartment" class="form-control shadow-sm" placeholder="2. lh.">
-					        </div>
-					    </div>
-					
-					    <button type="submit" class="btn btn-primary w-100 py-2 shadow-sm fw-bold text-uppercase" style="letter-spacing: 1px;">
-					        <i class="bi bi-check-circle me-2"></i> Cím mentése
-					    </button>
-					</form>
+                <div class="card-body">
+                    <form action="<c:url value='/add-address'/>" method="post" class="needs-validation">
+                        
+                        <div class="form-check mb-4 p-3 border rounded bg-light shadow-sm transition-all">
+                            <input class="form-check-input ms-1" type="checkbox" name="sameAsShipping" id="sameAsShipping">
+                            <label class="form-check-label small fw-bold ms-2" for="sameAsShipping">
+                                🏠 A számlázási cím megegyezik a szállításival
+                            </label>
+                        </div>
+                    
+                        <div id="categoryContainer" class="mb-3">
+                            <label class="form-label small fw-bold text-muted text-uppercase" style="font-size: 0.75rem;">Cím típusa</label>
+                            <select id="addressCategory" name="addressCategory" class="form-select shadow-sm border-primary-subtle">
+                                <option value="BILLING">💳 Számlázási cím</option>
+                                <option value="SHIPPING">🚚 Szállítási cím</option>
+                            </select>
+                        </div>
+                    
+                        <div class="row g-2 mb-3">
+                            <div class="col-4">
+                                <label class="form-label small fw-bold">Irsz.</label>
+                                <input type="text" id="zipCode" name="zipCode" class="form-control shadow-sm" list="zipOptions" placeholder="1234" 
+                                 pattern="^[0-9]{4}$" title="Az irányítószám pontosan 4 számjegy lehet" maxlength="4" required>
+                                <datalist id="zipOptions"></datalist>
+                            </div>
+                            <div class="col-8">
+                                <label class="form-label small fw-bold">Város</label>
+                                <input type="text" id="city" name="city" class="form-control shadow-sm" 
+                                       placeholder="Város neve" 
+                                       pattern="^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s\-\.]+$"
+                                       title="Csak betűket, szóközt, pontot és kötőjelet használhat!" 
+                                       required>
+                            </div>
+                        </div>
+                    
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Utca / Közterület</label>
+                            <input type="text" name="street" class="form-control shadow-sm" placeholder="Fő utca" required>
+                        </div>
+                    
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold">Házszám</label>
+                                <input type="text" name="houseNumber" class="form-control shadow-sm" placeholder="12/A" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold">Emelet</label>
+                                <input type="text" name="floor" class="form-control shadow-sm" placeholder="3.">
+                            </div>
+                        </div>
+                    
+                        <div class="row g-2 mb-4">
+                            <div class="col-4">
+                                <label class="form-label small fw-bold">Ajtó</label>
+                                <input type="text" name="door" class="form-control shadow-sm" placeholder="13">
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label small fw-bold">Épület</label>
+                                <input type="text" name="building" class="form-control shadow-sm" placeholder="A ép.">
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label small fw-bold">Lépcsőház</label>
+                                <input type="text" name="apartment" class="form-control shadow-sm" placeholder="2. lh.">
+                            </div>
+                        </div>
+                    
+                        <button type="submit" class="btn btn-primary w-100 py-2 shadow-sm fw-bold text-uppercase" style="letter-spacing: 1px;">
+                            <i class="bi bi-check-circle me-2"></i> Cím mentése
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-8">
+        <div class="col-lg-8 col-md-12">
             <h3 class="mb-4">Mentett címeim</h3>
             
             <c:if test="${empty shippingAddresses && empty billingAddresses}">
@@ -98,40 +101,38 @@
                     <c:forEach var="addr" items="${shippingAddresses}">
                         <div class="card mb-3 shadow-sm border-0 position-relative">
                             <div class="card-body">
-						    <div class="d-flex justify-content-between align-items-start">
-						        <h6 class="card-title mb-1">
-						            <c:out value="${addr.zipCode}"/> <c:out value="${addr.city}"/>
-						        </h6>
-						        <%-- Ha mindkét flag true, teszünk rá egy kis ikont --%>
-						        <c:if test="${addr.billing && addr.shipping}">
-						            <span class="badge rounded-pill bg-light text-primary border border-primary-subtle" 
-						                  title="Ez a cím szállítási és számlázási is" style="font-size: 0.6rem;">
-						                <i class="bi bi-shield-check"></i> Kombinált
-						            </span>
-						        </c:if>
-						    </div>
-						    <p class="card-text text-muted small mb-2">
-						        <c:out value="${addr.street}"/> <c:out value="${addr.houseNumber}."/>
-						    </p>
-						    
-						    </div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h6 class="card-title mb-1">
+                                        <c:out value="${addr.zipCode}"/> <c:out value="${addr.city}"/>
+                                    </h6>
+                                    <c:if test="${addr.billing && addr.shipping}">
+                                        <span class="badge rounded-pill bg-light text-primary border border-primary-subtle" 
+                                              title="Ez a cím szállítási és számlázási is" style="font-size: 0.6rem;">
+                                            <i class="bi bi-shield-check"></i> Kombinált
+                                        </span>
+                                    </c:if>
+                                </div>
+                                <p class="card-text text-muted small mb-2">
+                                    <c:out value="${addr.street}"/> <c:out value="${addr.houseNumber}."/>
+                                </p>
+                            </div>
                         </div>
                     </c:forEach>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6 ps-md-4">
                     <h5 class="text-success mb-3"><i class="bi bi-receipt"></i> Számlázási címek</h5>
                     <c:forEach var="addr" items="${billingAddresses}">
                         <div class="card mb-3 shadow-sm border-0 bg-light">
                             <div class="card-body">
                                 <h6 class="card-title mb-1">
-								    <c:out value="${addr.zipCode}"/> <c:out value="${addr.city}"/>
-								</h6>
-								<p class="card-text text-muted small mb-2">
-								    <c:out value="${addr.street}"/> <c:out value="${addr.houseNumber}."/>
-								    <c:if test="${not empty addr.floor}"> <br>Em: ${addr.floor}</c:if>
-								    <c:if test="${not empty addr.door}"> Ajtó: ${addr.door}</c:if>
-								</p>
+                                    <c:out value="${addr.zipCode}"/> <c:out value="${addr.city}"/>
+                                </h6>
+                                <p class="card-text text-muted small mb-2">
+                                    <c:out value="${addr.street}"/> <c:out value="${addr.houseNumber}."/>
+                                    <c:if test="${not empty addr.floor}"> <br>Em: ${addr.floor}</c:if>
+                                    <c:if test="${not empty addr.door}"> Ajtó: ${addr.door}</c:if>
+                                </p>
                                 
                                 <form action="<c:url value='/delete-address'/>" method="post" onsubmit="return confirm('Biztosan törlöd?');">
                                     <input type="hidden" name="addressId" value="${addr.id}">
@@ -141,12 +142,12 @@
                         </div>
                     </c:forEach>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
+            </div> 
+		</div>	
+	</div> 
+</div> 
 <script>
+// Ide jön a JS kódod változatlanul...
 const zipInput = document.getElementById('zipCode');
 const cityInput = document.getElementById('city');
 const zipOptions = document.getElementById('zipOptions');

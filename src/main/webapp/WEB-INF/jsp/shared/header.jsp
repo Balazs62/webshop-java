@@ -40,16 +40,16 @@
                     </ul>
                     
                     <ul class="navbar-nav align-items-center">
+                        
                         <li class="nav-item me-3">
                             <a class="nav-link position-relative" href="<c:url value='/cart/view'/>">
                                 <i class="bi bi-cart3 fs-5"></i> 
                                 <span class="ms-1">Kosár</span>
-                                <c:if test="${sessionScope.cartCount > 0}">
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                          style="font-size: 0.65rem;">
-                                        <c:out value="${sessionScope.cartCount}" />
-                                    </span>
-                                </c:if>
+								<span id="cart-count-badge" 
+								      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+								      style="font-size: 0.65rem; transition: transform 0.2s; ${ (empty sessionScope.cartCount or sessionScope.cartCount == 0) ? 'display: none;' : 'display: inline-block;' }">
+								    <c:out value="${not empty sessionScope.cartCount ? sessionScope.cartCount : '0'}" />
+								</span>
                             </a>
                         </li>
 
@@ -61,11 +61,9 @@
                                         <c:out value="${sessionScope.username}" />
                                     </a>
                                 </li>
-
                             </c:when>
                             <c:otherwise>
                                 <c:choose>
-
 								    <c:when test="${not empty sessionScope.user}">
 								        <li class="nav-item dropdown me-3">
 								            <a class="nav-link dropdown-toggle text-primary fw-bold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -81,7 +79,6 @@
 								        </li>
 								    </c:when>
 								    
-
 								    <c:otherwise>
 								        <li class="nav-item ms-2">
 								            <a class="btn btn-primary rounded-pill px-4" href="<c:url value='/login'/>">Bejelentkezés</a>

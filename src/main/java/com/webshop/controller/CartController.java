@@ -44,12 +44,15 @@ public class CartController {
         return cart.stream().mapToInt(CartItem::getQuantity).sum();
     }
 
-    @PostMapping("/add")
-    public String addToCart(@RequestParam Long productId, @RequestParam String size, HttpSession session) {
+    @PostMapping("/api/add")
+    @ResponseBody
+    public java.util.Map<String, Object> addApi(@RequestParam Long productId, @RequestParam String size, HttpSession session) {
         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
         if (cart == null) cart = new ArrayList<>();
 
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
         Product product = productRepository.findById(productId).orElse(null);
+        
         if (product != null) {
             boolean found = false;
             for (CartItem item : cart) {
@@ -62,10 +65,20 @@ public class CartController {
             if (!found) {
                 cart.add(new CartItem(productId, product.getName(), size, product.getBasePrice(), 1));
             }
+            
+            int newCount = calculateTotalQuantity(cart);
+            session.setAttribute("cart", cart);
+            session.setAttribute("cartCount", newCount);
+            
+            response.put("success", true);
+            response.put("cartCount", newCount);
+            response.put("message", "Sikeresen hozzáadva!");
+        } else {
+            response.put("success", false);
+            response.put("message", "Hiba: A termék nem található.");
         }
-        session.setAttribute("cart", cart);
-        session.setAttribute("cartCount", calculateTotalQuantity(cart));
-        return "redirect:/";
+        
+        return response;
     }
 
     @GetMapping("/view")
@@ -114,15 +127,34 @@ public class CartController {
         return "redirect:/cart/view";
     }
 
-    @PostMapping("/remove")
-    public String removeFromCart(@RequestParam Integer productId, @RequestParam String size, HttpSession session) {
+    @PostMapping("/api/remove")
+    @ResponseBody
+    public java.util.Map<String, Object> removeApi(@RequestParam Long productId, @RequestParam String size, HttpSession session) {
         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+
         if (cart != null) {
+            // Típusbiztos törlés: productId most már Long mindenhol
             cart.removeIf(item -> item.getProductId().equals(productId) && item.getSize().equals(size));
+            
+            int newCount = calculateTotalQuantity(cart);
+            
+            // Pontos végösszeg számítás BigDecimal-el
+            java.math.BigDecimal newTotal = cart.stream()
+                .map(item -> item.getPrice().multiply(java.math.BigDecimal.valueOf(item.getQuantity())))
+                .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+
             session.setAttribute("cart", cart);
-            session.setAttribute("cartCount", calculateTotalQuantity(cart));
+            session.setAttribute("cartCount", newCount);
+            
+            response.put("success", true);
+            response.put("cartCount", newCount);
+            response.put("totalPrice", newTotal.toString());
+            response.put("isEmpty", cart.isEmpty());
+        } else {
+            response.put("success", false);
         }
-        return "redirect:/cart/view";
+        return response;
     }
 
     // --- PÉNZTÁR MEGJELENÍTÉSE ---
