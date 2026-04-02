@@ -122,25 +122,35 @@
 
                 <div class="col-md-6 ps-md-4">
                     <h5 class="text-success mb-3"><i class="bi bi-receipt"></i> Számlázási címek</h5>
-                    <c:forEach var="addr" items="${billingAddresses}">
-                        <div class="card mb-3 shadow-sm border-0 bg-light">
-                            <div class="card-body">
-                                <h6 class="card-title mb-1">
-                                    <c:out value="${addr.zipCode}"/> <c:out value="${addr.city}"/>
-                                </h6>
-                                <p class="card-text text-muted small mb-2">
-                                    <c:out value="${addr.street}"/> <c:out value="${addr.houseNumber}."/>
-                                    <c:if test="${not empty addr.floor}"> <br>Em: ${addr.floor}</c:if>
-                                    <c:if test="${not empty addr.door}"> Ajtó: ${addr.door}</c:if>
-                                </p>
-                                
-                                <form action="<c:url value='/delete-address'/>" method="post" onsubmit="return confirm('Biztosan törlöd?');">
-                                    <input type="hidden" name="addressId" value="${addr.id}">
-                                    <button type="submit" class="btn btn-link text-danger p-0 small">Törlés</button>
-                                </form>
-                            </div>
-                        </div>
-                    </c:forEach>
+                  <c:forEach var="addr" items="${shippingAddresses}">
+				    <div class="card mb-3 shadow-sm border-0 position-relative">
+				        <div class="card-body">
+				            <div class="d-flex justify-content-between align-items-start">
+				                <h6 class="card-title mb-1">
+				                    <c:out value="${addr.zipCode}"/> <c:out value="${addr.city}"/>
+				                </h6>
+				                <c:if test="${addr.billing && addr.shipping}">
+				                    <span class="badge rounded-pill bg-light text-primary border border-primary-subtle" 
+				                          title="Ez a cím szállítási és számlázási is" style="font-size: 0.6rem;">
+				                        <i class="bi bi-shield-check"></i> Kombinált
+				                    </span>
+				                </c:if>
+				            </div>
+				            <p class="card-text text-muted small mb-2">
+				                <c:out value="${addr.street}"/> <c:out value="${addr.houseNumber}."/>
+				                <c:if test="${not empty addr.floor}"><br>Em: ${addr.floor}</c:if>
+				                <c:if test="${not empty addr.door}"> Ajtó: ${addr.door}</c:if>
+				            </p>
+				            <form action="<c:url value='/delete-address'/>" method="post" 
+				                  onsubmit="return confirm('Biztosan törlöd ezt a szállítási címet?');">
+				                <input type="hidden" name="addressId" value="${addr.id}">
+				                <button type="submit" class="btn btn-link text-danger p-0 small">
+				                    <i class="bi bi-trash3 me-1"></i>Törlés
+				                </button>
+				            </form>
+				        </div>
+				    </div>
+				</c:forEach>
                 </div>
             </div> 
 		</div>	

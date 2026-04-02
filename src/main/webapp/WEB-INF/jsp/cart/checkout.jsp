@@ -5,118 +5,233 @@
 
 <div class="container mt-5 mb-5">
     <div class="row align-items-start">
-        
+
+        <!-- BAL OLDAL -->
         <div class="col-lg-8 col-md-12 mb-4">
             <h2 class="mb-4"><i class="bi bi-shield-check text-success"></i> Pénztár</h2>
-            
-            <div class="card shadow-sm border-0">
-                <div id="quickAddressArea" class="p-4">
-                    
-                    <div class="row">
-                        <div class="col-md-6 border-end pe-md-4">
-                            <h5 class="mb-3 text-primary"><i class="bi bi-truck me-2"></i>Szállítási cím</h5>
-                            <div class="row g-2">
-                                <div class="col-4"><input type="text" id="s_zipCode" class="form-control" placeholder="Irsz." required></div>
-                                <div class="col-8"><input type="text" id="s_city" class="form-control" placeholder="Város" required></div>
-                                <div class="col-12"><input type="text" id="s_street" class="form-control" placeholder="Utca, házszám" required></div>
-                                <div class="col-12"><input type="text" id="s_houseNumber" class="form-control" placeholder="Emelet, ajtó (opcionális)"></div>
-                            </div>
-                            
-                            <div class="form-check form-switch mt-4 p-3 bg-light rounded border">
-                                <input class="form-check-input ms-0 me-2" type="checkbox" id="sameAsShip" checked onchange="toggleBillingSection()">
-                                <label class="form-check-label fw-bold" for="sameAsShip">A számlázási cím megegyezik</label>
-                            </div>
-                        </div>
-            
-                        <div class="col-md-6 ps-md-4 d-none" id="billingSection">
-                            <h5 class="mb-3 text-secondary"><i class="bi bi-receipt me-2"></i>Számlázási cím</h5>
-                            <div class="row g-2">
-                                <div class="col-4"><input type="text" id="b_zipCode" class="form-control" placeholder="Irsz."></div>
-                                <div class="col-8"><input type="text" id="b_city" class="form-control" placeholder="Város"></div>
-                                <div class="col-12"><input type="text" id="b_street" class="form-control" placeholder="Utca, házszám"></div>
-                                <div class="col-12"><input type="text" id="b_houseNumber" class="form-control" placeholder="Adószám (ha céges)"></div>
-                            </div>
-                        </div>
-                    </div> <div class="mt-4 pt-3 border-top">
-                        <button type="button" onclick="saveAddressAjax()" class="btn btn-primary btn-lg w-100 shadow-sm fw-bold">
-                            <span id="btnText">ADATOK MENTÉSE ÉS FOLYTATÁS</span>
-                            <span id="btnLoader" class="spinner-border spinner-border-sm d-none"></span>
-                        </button>
+
+            <!-- CÍM BEVITELI KÁRTYA -->
+            <div class="card shadow-sm border-0 mb-3" id="addressInputCard">
+                <div class="card-body p-4">
+                    <h5 class="mb-3 text-primary"><i class="bi bi-truck me-2"></i>Szállítási cím</h5>
+                    <div class="row g-2">
+                        <div class="col-4"><input type="number" id="s_zipCode" class="form-control" placeholder="Irányítószám" required></div>
+                        <div class="col-8"><input type="text" id="s_city" class="form-control" placeholder="Város" required></div>
+                        <div class="col-12"><input type="text" id="s_street" class="form-control" placeholder="Utca neve" required></div>
+                        <div class="col-12"><input type="text" id="s_houseNumber" class="form-control" placeholder="Házszám, emelet, ajtó"></div>
                     </div>
-                    
+
+                    <div class="form-check form-switch mt-3 p-3 bg-light rounded border">
+                        <input class="form-check-input ms-0 me-2" type="checkbox" id="sameAsShip" checked onchange="toggleBillingSection()">
+                        <label class="form-check-label fw-bold" for="sameAsShip">A számlázási cím megegyezik a szállítási címmel</label>
+                    </div>
+
+                    <div class="d-none mt-3" id="billingSection">
+                        <h5 class="mb-3 text-secondary"><i class="bi bi-receipt me-2"></i>Számlázási cím</h5>
+                        <div class="row g-2">
+                            <div class="col-4"><input type="number" id="b_zipCode" class="form-control" placeholder="Irányítószám"></div>
+                            <div class="col-8"><input type="text" id="b_city" class="form-control" placeholder="Város"></div>
+                            <div class="col-12"><input type="text" id="b_street" class="form-control" placeholder="Utca neve"></div>
+                            <div class="col-12"><input type="text" id="b_houseNumber" class="form-control" placeholder="Házszám, emelet, ajtó"></div>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="saveAddressAjax()" class="btn btn-primary btn-lg w-100 mt-4 fw-bold">
+                        <span id="btnText"><i class="bi bi-floppy me-2"></i>Cím mentése</span>
+                        <span id="btnLoader" class="spinner-border spinner-border-sm d-none"></span>
+                    </button>
+
+                    <div id="addressSuccess" class="alert alert-success mt-3 d-none">
+                        <i class="bi bi-check-circle me-2"></i>Cím sikeresen mentve!
+                    </div>
+                    <div id="addressError" class="alert alert-danger mt-3 d-none"></div>
                 </div>
             </div>
-        </div> 
+
+
+            <div class="card shadow-sm border-0 d-none" id="paymentCard">
+                <div class="card-body p-4">
+                    <h5 class="mb-3"><i class="bi bi-credit-card me-2 text-success"></i>Fizetési mód</h5>
+                    <div class="d-flex gap-3 flex-wrap mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="COD" checked>
+                            <label class="form-check-label" for="cod"><i class="bi bi-cash me-1"></i>Utánvét</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="transfer" value="TRANSFER">
+                            <label class="form-check-label" for="transfer"><i class="bi bi-bank me-1"></i>Banki átutalás</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="card" value="CARD">
+                            <label class="form-check-label" for="card"><i class="bi bi-credit-card me-1"></i>Bankkártya</label>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="placeOrderAjax()" class="btn btn-success btn-lg w-100 fw-bold">
+                        <i class="bi bi-bag-check me-2"></i>Rendelés leadása
+                    </button>
+                    <div id="orderError" class="alert alert-danger mt-3 d-none"></div>
+                </div>
+            </div>
+
+			<c:if test="${not empty shippingAddresses}" >
+				<script type="text/javascript">
+				document.addEventListener('DOMContentLoaded', function() {
+				    const firstShipping = {
+				        id: ${shippingAddresses[0].id},
+				        zipCode: '${shippingAddresses[0].zipCode}',
+				        city: '${shippingAddresses[0].city}',
+				        street: '${shippingAddresses[0].street}',
+				        houseNumber: '${shippingAddresses[0].houseNumber}'
+				    };
+
+				    document.getElementById('s_zipCode').value = firstShipping.zipCode;
+				    document.getElementById('s_city').value = firstShipping.city;
+				    document.getElementById('s_street').value = firstShipping.street;
+				    document.getElementById('s_houseNumber').value = firstShipping.houseNumber !== '-' ? firstShipping.houseNumber : '';
+
+				    savedShippingId = firstShipping.id;
+				    savedBillingId = ${billingAddresses[0].id};
+
+				    document.getElementById('paymentCard').classList.remove('d-none');
+				});
+				</script>
+			</c:if>
+			
+        </div>
+
+        <!-- JOBB OLDAL -->
         <div class="col-lg-4 col-md-12">
-            <div class="card shadow-sm sticky-top mt-6" style="top: 20px; border: none;">
-                <div class="card-header bg-primary text-white fw-bold py-3">Rendelésed</div>
+            <div class="card shadow-sm sticky-top" style="top: 20px; border: none;">
+                <div class="card-header bg-primary text-white fw-bold py-3">Rendelésed összegzése</div>
                 <div class="card-body">
                     <c:forEach var="item" items="${cart}">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="small">${item.name} x ${item.quantity}</span>
+                            <span class="small">${item.name} × ${item.quantity}</span>
                             <span class="small fw-bold">
                                 <fmt:formatNumber value="${item.price * item.quantity}" type="number" /> Ft
                             </span>
                         </div>
                     </c:forEach>
                     <hr>
-                    <div class="d-flex justify-content-between h5 fw-bold text-primary">
+                    <div class="d-flex justify-content-between small text-muted mb-1">
+                        <span>Szállítás:</span>
+                        <span><fmt:formatNumber value="${shippingCost}" type="number" /> Ft</span>
+                    </div>
+                    <div class="d-flex justify-content-between h5 fw-bold text-primary mt-2">
                         <span>Fizetendő:</span>
                         <span><fmt:formatNumber value="${totalPrice}" type="number" /> Ft</span>
                     </div>
                 </div>
             </div>
-        </div> </div> </div> <script>
-// JAVÍTOTT JS: A Bootstrap saját 'd-none' osztályát kapcsolgatjuk a style módosítása helyett
+        </div>
+
+    </div>
+</div>
+
+<script>
+// Az utoljára mentett cím ID-k
+let savedShippingId = null;
+let savedBillingId = null;
+
 function toggleBillingSection() {
     const isSame = document.getElementById('sameAsShip').checked;
-    const section = document.getElementById('billingSection');
-    
-    if (isSame) {
-        section.classList.add('d-none'); // Elrejtés
-    } else {
-        section.classList.remove('d-none'); // Megjelenítés
-    }
+    document.getElementById('billingSection').classList.toggle('d-none', isSame);
 }
 
 function saveAddressAjax() {
+    const s_zipCode = document.getElementById('s_zipCode').value.trim();
+    const s_city = document.getElementById('s_city').value.trim();
+    const s_street = document.getElementById('s_street').value.trim();
     const isSame = document.getElementById('sameAsShip').checked;
-    
+
+    if (!s_zipCode || !s_city || !s_street) {
+        document.getElementById('addressError').classList.remove('d-none');
+        document.getElementById('addressError').innerText = 'Kérjük töltsd ki a kötelező mezőket!';
+        return;
+    }
+
     const params = new URLSearchParams();
-    params.append('s_zipCode', document.getElementById('s_zipCode').value);
-    params.append('s_city', document.getElementById('s_city').value);
-    params.append('s_street', document.getElementById('s_street').value);
-    params.append('s_houseNumber', document.getElementById('s_houseNumber').value);
+    params.append('s_zipCode', s_zipCode);
+    params.append('s_city', s_city);
+    params.append('s_street', s_street);
+    params.append('s_houseNumber', document.getElementById('s_houseNumber').value.trim() || '-');
     params.append('sameAsShipping', isSame ? 'on' : 'off');
 
     if (!isSame) {
-        params.append('b_zipCode', document.getElementById('b_zipCode').value);
-        params.append('b_city', document.getElementById('b_city').value);
-        params.append('b_street', document.getElementById('b_street').value);
-        params.append('b_houseNumber', document.getElementById('b_houseNumber').value);
+        params.append('b_zipCode', document.getElementById('b_zipCode').value.trim());
+        params.append('b_city', document.getElementById('b_city').value.trim());
+        params.append('b_street', document.getElementById('b_street').value.trim());
+        params.append('b_houseNumber', document.getElementById('b_houseNumber').value.trim() || '-');
     }
 
-    document.getElementById('btnText').innerText = 'Mentés...';
+    document.getElementById('btnText').innerHTML = 'Mentés...';
     document.getElementById('btnLoader').classList.remove('d-none');
+    document.getElementById('addressError').classList.add('d-none');
+    document.getElementById('addressSuccess').classList.add('d-none');
 
-    fetch('<c:url value="/cart/add-quick-address"/>', {
+    fetch('<c:url value="/cart/api/save-address"/>', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: params
     })
-    .then(response => {
-        if (response.ok) {
-            window.location.reload(); 
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('btnText').innerHTML = '<i class="bi bi-floppy me-2"></i>Cím mentése';
+        document.getElementById('btnLoader').classList.add('d-none');
+
+        if (data.success) {
+            // Elmentjük az ID-kat
+            savedShippingId = data.shippingAddresses[0].id;
+            savedBillingId = data.billingAddresses[0].id;
+
+            document.getElementById('addressSuccess').classList.remove('d-none');
+            document.getElementById('paymentCard').classList.remove('d-none');
+            
+            // Görgetés a fizetési opcióhoz
+            document.getElementById('paymentCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
-            alert("Hiba történt! Ellenőrizze a megadott adatokat.");
-            document.getElementById('btnText').innerText = 'ADATOK MENTÉSE ÉS FOLYTATÁS';
-            document.getElementById('btnLoader').classList.add('d-none');
+            document.getElementById('addressError').classList.remove('d-none');
+            document.getElementById('addressError').innerText = data.message || 'Hiba történt!';
         }
     })
-    .catch(err => {
-        console.error("Hálózati hiba:", err);
-        document.getElementById('btnText').innerText = 'ADATOK MENTÉSE ÉS FOLYTATÁS';
+    .catch(() => {
+        document.getElementById('btnText').innerHTML = '<i class="bi bi-floppy me-2"></i>Cím mentése';
         document.getElementById('btnLoader').classList.add('d-none');
+        document.getElementById('addressError').classList.remove('d-none');
+        document.getElementById('addressError').innerText = 'Hálózati hiba történt!';
+    });
+}
+
+function placeOrderAjax() {
+    if (!savedShippingId || !savedBillingId) {
+        document.getElementById('orderError').classList.remove('d-none');
+        document.getElementById('orderError').innerText = 'Kérjük előbb mentsd el a szállítási címet!';
+        return;
+    }
+
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+    const params = new URLSearchParams();
+    params.append('shippingAddressId', savedShippingId);
+    params.append('billingAddressId', savedBillingId);
+    params.append('paymentMethod', paymentMethod);
+
+    fetch('<c:url value="/cart/checkout"/>', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params
+    })
+    .then(res => {
+        if (res.redirected) {
+            window.location.href = res.url;
+        } else {
+            throw new Error('Szerverhiba');
+        }
+    })
+    .catch(() => {
+        document.getElementById('orderError').classList.remove('d-none');
+        document.getElementById('orderError').innerText = 'Hiba történt a rendelés leadásakor!';
     });
 }
 </script>

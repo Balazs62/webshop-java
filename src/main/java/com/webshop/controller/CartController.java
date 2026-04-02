@@ -1,9 +1,12 @@
 package com.webshop.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -157,7 +160,6 @@ public class CartController {
         return response;
     }
 
-    // --- PÉNZTÁR MEGJELENÍTÉSE ---
     @GetMapping("/checkout")
     public String showCheckout(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
@@ -260,42 +262,81 @@ public class CartController {
         }
     }
     
-    @PostMapping("/add-quick-address")
+    @PostMapping("/api/save-address")
     @ResponseBody
-    public String addQuickDoubleAddress(
-            @RequestParam String s_zipCode, @RequestParam String s_city, 
+    public ResponseEntity<Map<String, Object>> saveAddress(
+            @RequestParam String s_zipCode, @RequestParam String s_city,
             @RequestParam String s_street, @RequestParam String s_houseNumber,
-            @RequestParam(required = false) String sameAsShipping,
-            @RequestParam(required = false) String b_zipCode, @RequestParam(required = false) String b_city,
-            @RequestParam(required = false) String b_street, @RequestParam(required = false) String b_houseNumber,
+            @RequestParam(required = false, defaultValue = "on") String sameAsShipping,
+            @RequestParam(required = false, defaultValue = "") String b_zipCode,
+            @RequestParam(required = false, defaultValue = "") String b_city,
+            @RequestParam(required = false, defaultValue = "") String b_street,
+            @RequestParam(required = false, defaultValue = "") String b_houseNumber,
             HttpSession session) {
 
+        Map<String, Object> response = new HashMap<>();
         User user = (User) session.getAttribute("user");
-        if (user == null) return "error";
-
-
-        Address shipping = new Address();
-        shipping.setUser(user);
-        shipping.setZipCode(s_zipCode);
-        shipping.setCity(s_city);
-        shipping.setStreet(s_street);
-        shipping.setHouseNumber(s_houseNumber);
-        shipping.setShipping(true);
-        shipping.setBilling("on".equals(sameAsShipping)); 
-        addressRepository.save(shipping);
-
-        if (!"on".equals(sameAsShipping)) {
-            Address billing = new Address();
-            billing.setUser(user);
-            billing.setZipCode(b_zipCode);
-            billing.setCity(b_city);
-            billing.setStreet(b_street);
-            billing.setHouseNumber(b_houseNumber);
-            billing.setShipping(false);
-            billing.setBilling(true);
-            addressRepository.save(billing);
+        if (user == null) {
+            response.put("success", false);
+            response.put("message", "Nem vagy bejelentkezve!");
+            return ResponseEntity.status(401).body(response);
         }
 
-        return "ok";
+        try {
+            boolean isSame = "on".equals(sameAsShipping);
+
+            Address shipping = new Address();
+            shipping.setUser(user);
+            shipping.setZipCode(s_zipCode.trim());
+            shipping.setCity(s_city.trim());
+            shipping.setStreet(s_street.trim());
+            shipping.setHouseNumber(s_houseNumber.isBlank() ? "-" : s_houseNumber.trim());
+            shipping.setShipping(true);
+            shipping.setBilling(isSame);
+            addressRepository.save(shipping);
+
+            if (!isSame) {
+                Address billing = new Address();
+                billing.setUser(user);
+                billing.setZipCode(b_zipCode.trim());
+                billing.setCity(b_city.trim());
+                billing.setStreet(b_street.trim());
+                billing.setHouseNumber(b_houseNumber.isBlank() ? "-" : b_houseNumber.trim());
+                billing.setShipping(false);
+                billing.setBilling(true);
+                addressRepository.save(billing);
+            }
+
+            // Visszaadjuk az összes mentett címet
+            List<Address> allAddresses = addressRepository.findByUser(user);
+            List<Map<String, Object>> shippingList = allAddresses.stream()
+                .filter(Address::isShipping)
+                .map(a -> {
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("id", a.getId());
+                    m.put("label", a.getZipCode() + " " + a.getCity() + ", " + a.getStreet() + " " + a.getHouseNumber());
+                    return m;
+                }).toList();
+
+            List<Map<String, Object>> billingList = allAddresses.stream()
+                .filter(Address::isBilling)
+                .map(a -> {
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("id", a.getId());
+                    m.put("label", a.getZipCode() + " " + a.getCity() + ", " + a.getStreet() + " " + a.getHouseNumber());
+                    return m;
+                }).toList();
+
+            response.put("success", true);
+            response.put("shippingAddresses", shippingList);
+            response.put("billingAddresses", billingList);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "Szerverhiba: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
     }
 }
