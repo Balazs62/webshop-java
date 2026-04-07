@@ -10,9 +10,13 @@
         <div class="col-lg-4 col-md-12 mb-5">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-dark text-white py-3">
-                    <h5 class="mb-0">Cím hozzáadása</h5>
+                    <h5 class="mb-0">Cím módosítása / hozzáadása</h5>
                 </div>
                 <div class="card-body">
+                    <div class="alert alert-info py-2 small">
+                        <i class="bi bi-info-circle me-1"></i> Új cím mentése felülírja a korábbit.
+                    </div>
+
                     <form action="<c:url value='/add-address'/>" method="post" class="needs-validation">
                         
                         <div class="form-check mb-4 p-3 border rounded bg-light shadow-sm transition-all">
@@ -23,10 +27,10 @@
                         </div>
                     
                         <div id="categoryContainer" class="mb-3">
-                            <label class="form-label small fw-bold text-muted text-uppercase" style="font-size: 0.75rem;">Cím típusa</label>
+                            <label class="form-label small fw-bold text-muted text-uppercase" style="font-size: 0.75rem;">Melyik címet módosítod?</label>
                             <select id="addressCategory" name="addressCategory" class="form-select shadow-sm border-primary-subtle">
-                                <option value="BILLING">💳 Számlázási cím</option>
                                 <option value="SHIPPING">🚚 Szállítási cím</option>
+                                <option value="BILLING">💳 Számlázási cím</option>
                             </select>
                         </div>
                     
@@ -57,17 +61,6 @@
                                 <label class="form-label small fw-bold">Házszám</label>
                                 <input type="text" name="houseNumber" class="form-control shadow-sm" placeholder="12/A" required>
                             </div>
-                            <div class="col-6">
-                                <label class="form-label small fw-bold">Emelet</label>
-                                <input type="text" name="floor" class="form-control shadow-sm" placeholder="3.">
-                            </div>
-                        </div>
-                    
-                        <div class="row g-2 mb-4">
-                            <div class="col-4">
-                                <label class="form-label small fw-bold">Ajtó</label>
-                                <input type="text" name="door" class="form-control shadow-sm" placeholder="13">
-                            </div>
                             <div class="col-4">
                                 <label class="form-label small fw-bold">Épület</label>
                                 <input type="text" name="building" class="form-control shadow-sm" placeholder="A ép.">
@@ -76,9 +69,18 @@
                                 <label class="form-label small fw-bold">Lépcsőház</label>
                                 <input type="text" name="apartment" class="form-control shadow-sm" placeholder="2. lh.">
                             </div>
-                        </div>
-                    
-                        <button type="submit" class="btn btn-primary w-100 py-2 shadow-sm fw-bold text-uppercase" style="letter-spacing: 1px;">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold">Emelet</label>
+                                <input type="text" name="floor" class="form-control shadow-sm" placeholder="3.">
+                            </div>
+                        </div>                        
+                        
+                        <div class="row g-2 mb-4">
+                            <div class="col-4">
+                                <label class="form-label small fw-bold">Ajtó</label>
+                                <input type="text" name="door" class="form-control shadow-sm" placeholder="13">
+                            </div>
+                        </div> <button type="submit" class="btn btn-primary w-100 py-2 shadow-sm fw-bold text-uppercase" style="letter-spacing: 1px;">
                             <i class="bi bi-check-circle me-2"></i> Cím mentése
                         </button>
                     </form>
@@ -97,13 +99,13 @@
 
             <div class="row">
                 <div class="col-md-6 border-end">
-                    <h5 class="text-primary mb-3"><i class="bi bi-truck"></i> Szállítási címek</h5>
+                    <h5 class="text-primary mb-3"><i class="bi bi-truck"></i> Szállítási cím</h5>
                     <c:forEach var="addr" items="${shippingAddresses}">
                         <div class="card mb-3 shadow-sm border-0 position-relative">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <h6 class="card-title mb-1">
-                                        <c:out value="${addr.zipCode}"/> <c:out value="${addr.city}"/>
+                                        <c:out value="${addr.zipCode}"/> <c:out value="${addr.city}" />
                                     </h6>
                                     <c:if test="${addr.billing && addr.shipping}">
                                         <span class="badge rounded-pill bg-light text-primary border border-primary-subtle" 
@@ -114,6 +116,10 @@
                                 </div>
                                 <p class="card-text text-muted small mb-2">
                                     <c:out value="${addr.street}"/> <c:out value="${addr.houseNumber}."/>
+                                    <c:if test="${not empty addr.building}"> <br>Ép: ${addr.building}</c:if>
+                                    <c:if test="${not empty addr.apartment}"> Lh: ${addr.apartment}</c:if>
+                                    <c:if test="${not empty addr.floor}"> Em: ${addr.floor}</c:if>
+                                    <c:if test="${not empty addr.door}"> Ajtó: ${addr.door}</c:if>
                                 </p>
                             </div>
                         </div>
@@ -121,8 +127,8 @@
                 </div>
 
                 <div class="col-md-6 ps-md-4">
-                    <h5 class="text-success mb-3"><i class="bi bi-receipt"></i> Számlázási címek</h5>
-                  <c:forEach var="addr" items="${shippingAddresses}">
+                    <h5 class="text-success mb-3"><i class="bi bi-receipt"></i> Számlázási cím</h5>
+                    <c:forEach var="addr" items="${billingAddresses}">
 				    <div class="card mb-3 shadow-sm border-0 position-relative">
 				        <div class="card-body">
 				            <div class="d-flex justify-content-between align-items-start">
@@ -138,11 +144,13 @@
 				            </div>
 				            <p class="card-text text-muted small mb-2">
 				                <c:out value="${addr.street}"/> <c:out value="${addr.houseNumber}."/>
-				                <c:if test="${not empty addr.floor}"><br>Em: ${addr.floor}</c:if>
+				                <c:if test="${not empty addr.building}"> <br>Ép: ${addr.building}</c:if>
+                                <c:if test="${not empty addr.apartment}"> Lh: ${addr.apartment}</c:if>
+				                <c:if test="${not empty addr.floor}"> Em: ${addr.floor}</c:if>
 				                <c:if test="${not empty addr.door}"> Ajtó: ${addr.door}</c:if>
 				            </p>
 				            <form action="<c:url value='/delete-address'/>" method="post" 
-				                  onsubmit="return confirm('Biztosan törlöd ezt a szállítási címet?');">
+				                  onsubmit="return confirm('Biztosan törlöd ezt a címet?');">
 				                <input type="hidden" name="addressId" value="${addr.id}">
 				                <button type="submit" class="btn btn-link text-danger p-0 small">
 				                    <i class="bi bi-trash3 me-1"></i>Törlés
@@ -156,13 +164,13 @@
 		</div>	
 	</div> 
 </div> 
+
 <script>
-// Ide jön a JS kódod változatlanul...
+// A JS kódod érintetlenül maradhat...
 const zipInput = document.getElementById('zipCode');
 const cityInput = document.getElementById('city');
 const zipOptions = document.getElementById('zipOptions');
 
-// Új elemek a checkbox logikához
 const sameAsCheck = document.getElementById('sameAsShipping');
 const categoryContainer = document.getElementById('categoryContainer');
 const categorySelect = document.querySelector('select[name="addressCategory"]');
@@ -219,5 +227,4 @@ if (sameAsCheck) {
 }
 </script>
 
-<%-- 2. FOOTER BEILLESZTÉSE (Static Include) --%>
 <%@ include file="../shared/footer.jsp" %>

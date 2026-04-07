@@ -47,7 +47,7 @@ public class Address {
 	// --- GETTEREK ---
 	public Long getId() { return id; }
 	public User getUser() { return user; }
-	public boolean isBilling() { return billing; } // Boolean-nál 'is' a szokásos kezdés
+	public boolean isBilling() { return billing; }
 	public boolean isShipping() { return shipping; }
 	public String getCity() { return city; }
 	public String getZipCode() { return zipCode; }

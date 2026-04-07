@@ -22,7 +22,7 @@ import com.webshop.model.OrderItem;
 import com.webshop.model.Product;
 import com.webshop.model.ProductVariant;
 import com.webshop.model.User;
-import com.webshop.repository.OrderItemRepository;
+import com.webshop.repository.AddressRepository;
 import com.webshop.repository.OrderRepository;
 import com.webshop.repository.ProductRepository;
 
@@ -37,7 +37,7 @@ public class CartController {
     private ProductRepository productRepository;
     
     @Autowired
-    private com.webshop.repository.AddressRepository addressRepository;
+    private AddressRepository addressRepository;
     
     @Autowired
     private OrderRepository orderRepository;
@@ -137,12 +137,10 @@ public class CartController {
         java.util.Map<String, Object> response = new java.util.HashMap<>();
 
         if (cart != null) {
-            // Típusbiztos törlés: productId most már Long mindenhol
             cart.removeIf(item -> item.getProductId().equals(productId) && item.getSize().equals(size));
             
             int newCount = calculateTotalQuantity(cart);
             
-            // Pontos végösszeg számítás BigDecimal-el
             java.math.BigDecimal newTotal = cart.stream()
                 .map(item -> item.getPrice().multiply(java.math.BigDecimal.valueOf(item.getQuantity())))
                 .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
@@ -173,9 +171,7 @@ public class CartController {
             .map(item -> item.getPrice().multiply(java.math.BigDecimal.valueOf(item.getQuantity())))
             .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
 
-
         java.math.BigDecimal shipping = java.math.BigDecimal.valueOf(1990);
-
         java.math.BigDecimal totalPrice = subtotal.add(shipping);
 
         List<Address> all = addressRepository.findByUser(user);
@@ -204,7 +200,6 @@ public class CartController {
         if (user == null || cart == null || cart.isEmpty()) return "redirect:/cart/view";
 
         try {
-            // 1. Rendelés (Order) alapadatok beállítása
             Order order = new Order();
             order.setUser(user);
             order.setShippingAddress(addressRepository.findById(shippingAddressId).orElseThrow());
@@ -223,11 +218,9 @@ public class CartController {
                     .findFirst()
                     .orElseThrow();
 
-
                 if (variant.getStockQuantity() < item.getQuantity()) {
                     return "redirect:/cart/view?error=outOfStock&product=" + product.getName();
                 }
-
 
                 variant.setStockQuantity(variant.getStockQuantity() - item.getQuantity());
 
@@ -239,11 +232,9 @@ public class CartController {
 
                 orderItems.add(orderItem);
                 
-
                 java.math.BigDecimal lineTotal = item.getPrice().multiply(java.math.BigDecimal.valueOf(item.getQuantity()));
                 subtotal = subtotal.add(lineTotal);
             }
-
 
             java.math.BigDecimal shipping = java.math.BigDecimal.valueOf(1990);
             order.setTotalPrice(subtotal.add(shipping));
@@ -262,16 +253,37 @@ public class CartController {
         }
     }
     
+    @GetMapping("/success")
+    public String orderSuccess(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        
+        if (user == null) {
+            return "redirect:/login";
+        }
+        
+        return "cart/success";
+    }
+    
     @PostMapping("/api/save-address")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> saveAddress(
-            @RequestParam String s_zipCode, @RequestParam String s_city,
-            @RequestParam String s_street, @RequestParam String s_houseNumber,
+    public ResponseEntity<Map<String, Object>> saveAddressAjax(
+            @RequestParam String s_zipCode,
+            @RequestParam String s_city,
+            @RequestParam String s_street,
+            @RequestParam String s_houseNumber,
+            @RequestParam (required = false) String s_apartment,
+            @RequestParam (required = false) String s_building,
+            @RequestParam (required = false) String s_door,
+            @RequestParam (required = false) String s_floor,
             @RequestParam(required = false, defaultValue = "on") String sameAsShipping,
             @RequestParam(required = false, defaultValue = "") String b_zipCode,
             @RequestParam(required = false, defaultValue = "") String b_city,
             @RequestParam(required = false, defaultValue = "") String b_street,
             @RequestParam(required = false, defaultValue = "") String b_houseNumber,
+            @RequestParam(required = false, defaultValue = "") String b_apartment,
+            @RequestParam(required = false, defaultValue = "") String b_building,
+            @RequestParam(required = false, defaultValue = "") String b_door,
+            @RequestParam(required = false, defaultValue = "") String b_floor,
             HttpSession session) {
 
         Map<String, Object> response = new HashMap<>();
@@ -285,45 +297,66 @@ public class CartController {
         try {
             boolean isSame = "on".equals(sameAsShipping);
 
-            Address shipping = new Address();
+            // Jelenlegi címek lekérdezése az 1 db-os szabály betartásához
+            List<Address> existingAddresses = addressRepository.findByUser(user);
+            
+            Address shipping = existingAddresses.stream()
+                .filter(Address::isShipping)
+                .findFirst()
+                .orElse(new Address());
+
             shipping.setUser(user);
             shipping.setZipCode(s_zipCode.trim());
             shipping.setCity(s_city.trim());
             shipping.setStreet(s_street.trim());
             shipping.setHouseNumber(s_houseNumber.isBlank() ? "-" : s_houseNumber.trim());
+            shipping.setApartment(s_apartment != null ? s_apartment.trim() : null);
+            shipping.setBuilding(s_building != null ? s_building.trim() : null);
+            shipping.setDoor(s_door != null ? s_door.trim() : null);
+            shipping.setFloor(s_floor != null ? s_floor.trim() : null);
             shipping.setShipping(true);
             shipping.setBilling(isSame);
             addressRepository.save(shipping);
 
+            Address billing = existingAddresses.stream()
+                .filter(a -> a.isBilling() && !a.isShipping())
+                .findFirst()
+                .orElse(new Address());
+
             if (!isSame) {
-                Address billing = new Address();
                 billing.setUser(user);
                 billing.setZipCode(b_zipCode.trim());
                 billing.setCity(b_city.trim());
                 billing.setStreet(b_street.trim());
                 billing.setHouseNumber(b_houseNumber.isBlank() ? "-" : b_houseNumber.trim());
+                billing.setApartment(b_apartment.trim());
+                billing.setBuilding(b_building.trim());
+                billing.setDoor(b_door.trim());
+                billing.setFloor(b_floor.trim());
                 billing.setShipping(false);
                 billing.setBilling(true);
                 addressRepository.save(billing);
+            } else {
+                // Ha bepipálta, hogy megegyezik, a különálló számlázásit (ha létezett) töröljük
+                if (billing.getId() != null) {
+                    addressRepository.delete(billing);
+                }
             }
 
-            // Visszaadjuk az összes mentett címet
+            // Visszaadjuk a frissített listákat ID-val, hogy a JS be tudja állítani
             List<Address> allAddresses = addressRepository.findByUser(user);
+            
             List<Map<String, Object>> shippingList = allAddresses.stream()
-                .filter(Address::isShipping)
-                .map(a -> {
+                .filter(Address::isShipping).map(a -> {
                     Map<String, Object> m = new HashMap<>();
                     m.put("id", a.getId());
-                    m.put("label", a.getZipCode() + " " + a.getCity() + ", " + a.getStreet() + " " + a.getHouseNumber());
                     return m;
                 }).toList();
 
             List<Map<String, Object>> billingList = allAddresses.stream()
-                .filter(Address::isBilling)
-                .map(a -> {
+                .filter(Address::isBilling).map(a -> {
                     Map<String, Object> m = new HashMap<>();
                     m.put("id", a.getId());
-                    m.put("label", a.getZipCode() + " " + a.getCity() + ", " + a.getStreet() + " " + a.getHouseNumber());
                     return m;
                 }).toList();
 

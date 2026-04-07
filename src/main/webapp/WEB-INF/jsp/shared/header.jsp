@@ -72,7 +72,7 @@
 								            </a>
 								            <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="navbarDropdown">
 								                <li><a class="dropdown-item" href="<c:url value='/profile'/>"><i class="bi bi-person me-2"></i>Profilom</a></li>
-								                <li><a class="dropdown-item" href="<c:url value='/orders'/>"><i class="bi bi-receipt me-2"></i>Rendeléseim</a></li>
+								                <li><a class="dropdown-item" href="<c:url value='/my-orders'/>"><i class="bi bi-receipt me-2"></i>Rendeléseim</a></li>
 								                <li><hr class="dropdown-divider"></li>
 								                <li><a class="dropdown-item text-danger" href="<c:url value='/logout'/>"><i class="bi bi-box-arrow-right me-2"></i>Kijelentkezés</a></li>
 								            </ul>
