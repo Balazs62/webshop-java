@@ -21,17 +21,17 @@
 					    <div class="alert alert-danger">Sikertelen bejelentkezés!</div>
 					</c:if>
 
-                    <form action="<c:url value='/login'/>" method="post">
-                        <div class="mb-3">
-                            <label>Email</label>
-                            <input type="email" name="email" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Jelszó</label>
-                            <input type="password" name="password" class="form-control" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Belépés</button>
-                    </form>
+					<form action="<c:url value='/login'/>" method="post">
+					    <div class="mb-3">
+					        <label>Email vagy Felhasználónév</label>
+					        <input type="text" name="identifier" class="form-control" required>
+					    </div>
+					    <div class="mb-3">
+					        <label>Jelszó</label>
+					        <input type="password" name="password" class="form-control" required>
+					    </div>
+					    <button type="submit" class="btn btn-primary w-100">Belépés</button>
+					</form>
                     <script src="https://www.google.com/recaptcha/api.js?render=6LebRposAAAAAE8nuDJ1rknYH0msDiSJmFoITJDm"></script>
 
 					<script>

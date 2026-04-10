@@ -1,3 +1,9 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
+
 <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 100%; min-height: 100vh;">
     <a href="<c:url value='/admin/dashboard'/>" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
         <i class="bi bi-shield-lock-fill me-2"></i>
@@ -27,9 +33,4 @@
         </li>
     </ul>
     <hr>
-    <div class="dropdown">
-        <a href="<c:url value='/'/>" class="btn btn-outline-light btn-sm w-100">
-            <i class="bi bi-arrow-left"></i> Vissza a bolthoz
-        </a>
-    </div>
 </div>

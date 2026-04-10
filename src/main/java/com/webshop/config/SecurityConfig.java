@@ -12,15 +12,37 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final CustomSuccessHandler customSuccessHandler;
+
+    // Injektáljuk a SuccessHandler-t, ami majd eldönti, ki hova kerül login után
+    public SecurityConfig(CustomSuccessHandler customSuccessHandler) {
+        this.customSuccessHandler = customSuccessHandler;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) 
+            .csrf(csrf -> csrf.disable()) // Fejlesztés alatt kikapcsolva a kényelem miatt
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll() 
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/static/**", "/resources/**", "/WEB-INF/**").permitAll()
+                
+                .requestMatchers("/", "/login", "/register", "/error").permitAll()
+                
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                
+                .anyRequest().authenticated()
             )
-            .formLogin(form -> form.disable()) 
-            .httpBasic(basic -> basic.disable());
+            .formLogin(form -> form
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .usernameParameter("identifier")
+                .successHandler(customSuccessHandler)
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutSuccessUrl("/")
+                .permitAll()
+            );
 
         return http.build();
     }

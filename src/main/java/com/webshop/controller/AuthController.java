@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Controller
 public class AuthController {
@@ -76,39 +77,8 @@ public class AuthController {
         return "auth/login";
     }
 	
-    @PostMapping("/login")
-    public String loginUser(@RequestParam String email, 
-                            @RequestParam String password, 
-                            HttpSession session, 
-                            Model model) {
-        
-        if (email == null || !email.contains("@") || email.length() > 100) {
-            model.addAttribute("loginError", "Érvénytelen email formátum!");
-            return "auth/login";
-        }
-
-        User user = userRepository.findByEmail(email);
-        
-        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-            session.setAttribute("user", user);
-            return "redirect:/";
-        }
-        
-        model.addAttribute("loginError", "Hibás email vagy jelszó!");
-        return "auth/login";
-    }
-	
-    @GetMapping("/account/profile")
-    public String showProfile(HttpSession session) {
-        if (session.getAttribute("user") == null) {
-            return "redirect:/login"; 
-        }
-        return "account/profile";
-    }
-	
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/";
-    }
+    @GetMapping("/auth/profile")
+    public String showProfile() {
+		return "auth/profile";
+	}
 }
