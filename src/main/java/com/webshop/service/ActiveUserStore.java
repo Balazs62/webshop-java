@@ -12,15 +12,22 @@ public class ActiveUserStore implements HttpSessionListener {
 	
 	private final AtomicInteger activeSessions = new AtomicInteger(0);
 	
+	public void increment() {
+		activeSessions.incrementAndGet();
+	}
+	
 	@Override
 	public void sessionCreated(HttpSessionEvent event) {
-		activeSessions.incrementAndGet();
+		
 	}
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent event) {
-		if(activeSessions.get() > 0) {
-		activeSessions.decrementAndGet();
+		Object isCounted = event.getSession().getAttribute("isCountedUser");
+		if (isCounted != null && (boolean) isCounted) {
+			if (activeSessions.get() > 0) {
+			activeSessions.decrementAndGet();
+			}
 		}
 	}
 	

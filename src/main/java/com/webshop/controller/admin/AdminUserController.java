@@ -26,30 +26,32 @@ public class AdminUserController {
     
     @GetMapping("/list")
     public String listUsers(Model model) {
-        List<User> users = userRepository.findAll();
+        List<User> users = userRepository.findByRoleNot("ADMIN");
         model.addAttribute("users", users);
-        return "admin/users/list";
+        return "admin/users/user_list";
     }
-    
+    	
     @PostMapping("/updateRole")
     public String updateUserRole(@RequestParam Long userId, @RequestParam String newRole) {
         userRepository.findById(userId).ifPresent(user -> {
-            user.setRole(newRole);
-            userRepository.save(user);
+            if (!"ROLE_ADMIN".equals(user.getRole())) { 
+                user.setRole(newRole);
+                userRepository.save(user);
+            }
         });
-        return "redirect:/admin/users/list?success=roleUpdated";
+        return "redirect:/admin/users/list?success=roleUpdated"; 
     }
 
     @PostMapping("/delete")
     public String deleteUser(@RequestParam Long userId, Principal principal) {
-    	String loggedInUserEmail = principal.getName();
+        String loggedInUserEmail = principal.getName();
         
         userRepository.findByEmail(loggedInUserEmail).ifPresent(currentUser -> {
             if (!currentUser.getId().equals(userId)) {
                 userRepository.deleteById(userId);
             }
         });
-        return "redirect:/admin/users/list?success=userDeleted";
+        return "redirect:/admin/users/list";
     }
 	
 	

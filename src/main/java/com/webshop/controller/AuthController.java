@@ -1,19 +1,22 @@
 package com.webshop.controller;
 
-import com.webshop.model.User;
-import com.webshop.repository.UserRepository;
-import com.webshop.service.CaptchaValidator;
-import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDate;
-import java.util.Optional;
+import com.webshop.model.User;
+import com.webshop.repository.UserRepository;
+import com.webshop.service.CaptchaValidator;
+
+import jakarta.validation.Valid;
 
 @Controller
 public class AuthController {
@@ -54,12 +57,12 @@ public class AuthController {
             return "auth/register";
         }
 
-        if (userRepository.findByEmail(user.getEmail()) != null) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             model.addAttribute("emailError", "Ez az email már regisztrálva van!");
             return "auth/register";
         }
 
-        if (userRepository.findByUsername(user.getUsername()) != null) {
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             model.addAttribute("usernameError", "Ez a felhasználónév már foglalt!");
             return "auth/register";
         }

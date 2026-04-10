@@ -2,7 +2,6 @@ package com.webshop.controller.admin;
 
 import java.math.BigDecimal; // Fontos import!
 import java.security.Principal;
-import java.util.List; // Fontos import!
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.webshop.model.Order; // Be kell importálni az Order modellt!
 import com.webshop.model.User;
 import com.webshop.repository.OrderRepository;
 import com.webshop.repository.ProductRepository;
@@ -36,7 +34,7 @@ public class AdminDashboardController {
 	@GetMapping("/dashboard")
 	public String dashBoard(Model model, Principal principal) {
 
-		long totalUsers = userRepository.count();
+		long totalUsersCount = userRepository.countByRoleNot("ADMIN");
 		long totalProducts = productRepository.count();
 		long totalOrders = orderRepository.count();
 		
@@ -45,7 +43,7 @@ public class AdminDashboardController {
 		int liveUsers = activeUserStore.getActiveUsers();
 		
 		
-		model.addAttribute("totalUsers", totalUsers);
+		model.addAttribute("totalUsers", totalUsersCount);
 		model.addAttribute("totalProducts", totalProducts);
 		model.addAttribute("totalOrders", totalOrders);
 		model.addAttribute("liveUsers", liveUsers);
